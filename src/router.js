@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import App from './Components/App.vue'
-import Waybill from './Components/Waybill.vue'
+import WaybillList from './Components/WaybillList.vue'
 import WaybillEdit from './Components/WaybillEdit.vue'
 import Home from './Components/Home.vue'
 
@@ -14,7 +14,7 @@ export default new VueRouter({
     { path: '/', component: Home },
     {
       path: '/waybill',
-      component: Waybill,
+      component: WaybillList,
       children: [
         { path: ':id', component: WaybillEdit, props: true },
       ]
