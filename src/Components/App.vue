@@ -9,11 +9,11 @@
   body { margin: 0; font-family: sans-serif; }
   h1 { font-weight: normal; font-size: 1.5rem; }
   h1 input { font-size: inherit; }
-  input, select { font-size: inherit; font-family: inherit; padding: .3rem; border: 1px solid rgba(0,0,0,.15); }
+  input, select { font-size: inherit; font-family: inherit; padding: .3rem; border: 1px solid rgba(0,0,0,.15); box-sizing: border-box; }
   input:focus, select:focus { border: 1px solid rgba(0,0,0,.3); }
   th { color: #ccc; font-weight: normal; }
 
-  a { color: rgb(14,122,254); }
+  a { color: rgb(14,122,254); text-decoration: none; }
   a:hover { color: red; }
   input[disabled] { background: #eee; color: #777; }
 
