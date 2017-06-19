@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 
 import App from './Components/App.vue'
 import WaybillList from './Components/WaybillList.vue'
+import ProductList from './Components/ProductList.vue'
 import WaybillEdit from './Components/WaybillEdit.vue'
 import Home from './Components/Home.vue'
 
@@ -18,6 +19,10 @@ export default new VueRouter({
       children: [
         { path: ':id', component: WaybillEdit, props: true },
       ]
+    },
+    {
+      path: '/product',
+      component: ProductList,
     },
   ]
 })

@@ -12,6 +12,7 @@
   input, select { font-size: inherit; font-family: inherit; padding: .3rem; border: 1px solid rgba(0,0,0,.15); box-sizing: border-box; }
   input:focus, select:focus { border: 1px solid rgba(0,0,0,.3); }
   th { color: #ccc; font-weight: normal; }
+  .body { margin: 0 .5rem; }
 
   a { color: rgb(14,122,254); text-decoration: none; }
   a:hover { color: red; }
