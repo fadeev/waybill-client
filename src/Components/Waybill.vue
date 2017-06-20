@@ -83,7 +83,7 @@
     <div>
       <input type="text" v-model="waybill.product_name" @input="getProduct" placeholder="Добавить наименование">
       <div v-if="waybill.product_name" class="list">
-        <a v-for="product in waybill.product_list" href="" @click.prevent="selectProduct(product.product_id)">{{product.name}}</a>
+        <a v-for="product in waybill.product_list" href="" @click.prevent="selectProduct(product)">{{product.name}}</a>
         <a href="" @click.prevent="submitProduct(waybill.product_name)">Создать товар "{{waybill.product_name}}"</a>
       </div>
     </div>
@@ -136,8 +136,6 @@
 
 <script>
   import axios from 'axios';
-  import merge from 'lodash/merge';
-  import clone from 'lodash/clone';
   import forEach from 'lodash/forEach';
 
   export default {
@@ -156,11 +154,6 @@
         return: null,
       },
       shipment: [],
-      shipmentBlueprint: {
-        quantity: null,
-        sale_price: null,
-        cost_total: null,
-      },
       waybill_success: null,
     }),
     mounted() {
@@ -180,9 +173,12 @@
     },
     computed: {
       total: function () {
-        let s = this.shipment;
-        if (s && s.length > 0)
-          return s.reduce((sum, e) => sum + e.cost_total, 0).toFixed(2);
+        try {
+          return this.shipment.reduce((sum, e) => sum + e.cost_total, 0).toFixed(2)
+        }
+        catch (e) {
+          return 0;
+        }
       }
     },
     methods: {
@@ -191,7 +187,6 @@
       },
       computeSalePrice(s) {
         s.sale_price = (s.cost_total * (100 + this.waybill.markup) / (100 * s.quantity)).toFixed()
-        console.log(s.sale_price);
       },
       getSupplier(e) {
         this.waybill.supplier_id = null;
@@ -224,7 +219,7 @@
         axios.get(`${URL}/waybill/${id}`)
              .then(({data: {data: {waybill, shipment}}}) => {
                this.resetFields();
-               merge(this.waybill, waybill)
+               this.waybill = Object.assign(this.waybill, waybill)
                this.shipment = shipment || []
               })
              .catch(error => this.resetFields());
@@ -238,8 +233,8 @@
       },
       submitProduct(name) {
         axios.post(`${URL}/product`, {product: {name: name}})
-             .then(({data: {data: {product: {product_id, name}}}}) => {
-               this.selectProduct(product_id)
+             .then(({data: {data: {product}}}) => {
+               this.selectProduct(product)
              })
              .catch(error => console.log(error))        
       },
@@ -254,14 +249,10 @@
           })
           .catch(error => console.log('error'))
       },
-      selectProduct(id) {
+      selectProduct(product) {
         this.waybill.product_name = null;
         this.waybill.product_list = null;
-        axios.get(`${URL}/product/${id}`)
-             .then(({data: {data: {product}}}) => {
-               this.shipment.push(merge(clone(this.shipmentBlueprint), product))
-             })
-             .catch(error => console.log(error))
+        this.shipment.push(Object.assign({quantity: null, sale_price: null, cost_total: null}, product))
       },
       setOriginalDate(e) {
         let date = e.target.value

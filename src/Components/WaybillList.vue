@@ -11,7 +11,7 @@
           <div>Поставщик</div>
           <div class="number">Сумма</div>
         </div>
-        <router-link class="item" :to="`/waybill/${waybill.waybill_id}`" v-for="waybill in waybillList" tag="div">
+        <router-link class="item" :to="`/waybill/${waybill.waybill_id}`" v-for="waybill in waybillList" tag="div" :key="waybill.waybill_id">
           <div class="date">
             {{waybill.original_date_day_month}}
             <div class="serial">{{waybill.serial_number ? `№ ${waybill.serial_number}` : ''}}</div>
