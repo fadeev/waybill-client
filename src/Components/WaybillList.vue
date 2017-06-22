@@ -20,7 +20,7 @@
             {{waybill.name ? waybill.name : 'н/д'}}
           </div>
           <div class="number">
-            <strong>{{waybill.cost_total}}</strong>
+            <strong>{{waybill.cost_total}} ₽</strong>
           </div>
         </router-link>
       </div>
@@ -36,7 +36,7 @@
   .item:hover { background: rgba(0,0,0,.01); cursor: pointer; }
   .table { display: flex; flex-flow: column nowrap; line-height: 1.5; }
   .table > * { display: flex; flex-flow: row nowrap; min-height: 2.5rem; align-items: top; }
-  .table > * > * { flex-basis: 250px; padding: .5rem .2rem; }
+  .table > * > * { display: flex; flex-flow: column nowrap; flex-basis: 250px; padding: .5rem .2rem; }
   .table > * > *.number { text-align: right; flex-basis: 100px; }
   .date { flex-basis: 120px; }
   /*.table { display: flex; flex-flow: column nowrap; flex: 1 1 auto; margin-bottom: 1rem; align-content: center; }
@@ -65,13 +65,11 @@
     components: { Pane },
     computed: {
       waybillList() {
-        return this.$store.state.waybills
+        return this.$store.state.waybillList
       }
     },
     mounted() {
-      this.$store.dispatch('fetchWaybills');
-    },
-    methods: {
+      this.$store.dispatch('getWaybillList');
     },
   }
 </script>

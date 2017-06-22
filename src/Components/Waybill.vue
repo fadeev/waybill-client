@@ -240,7 +240,7 @@
       },
       submitWaybill(waybill, shipment) {
         shipment = shipment || [];
-        this.$store.dispatch('submitWaybill', {waybill, shipment, router: this.$router})
+        this.$store.dispatch('postWaybill', {waybill, shipment, router: this.$router})
           .then(data => {
             this.waybill_success = true;
             setTimeout(() => {

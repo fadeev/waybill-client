@@ -6,6 +6,7 @@
 </template>
 
 <style>
+  html { width:100vw; overflow-x: hidden; }
   body { margin: 0; font-family: sans-serif; }
   h1 { font-weight: normal; font-size: 1.5rem; }
   h1 input { font-size: inherit; }

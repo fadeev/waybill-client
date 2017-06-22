@@ -6,45 +6,36 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    waybills: []
+    waybillList: [],
   },
   mutations: {
-    fetchWaybills(state, waybills) {
-      state.waybills = waybills;
+    getWaybillList(state, waybillList) {
+      state.waybillList = waybillList;
     },
   },
   actions: {
-    fetchWaybills({commit}) {
+    getWaybillList({commit}) {
       axios.get(`${URL}/waybill`)
-           .then(({data}) => commit('fetchWaybills', data.data.waybill));
+           .then(({data}) => commit('getWaybillList', data.data.waybill));
     },
-    submitWaybill({dispatch, commit}, {waybill, shipment, router}) {
+    postWaybill({dispatch, commit}, {waybill, shipment, router}) {
       return new Promise((resolve, reject) => {
         axios.post(`${URL}/waybill`, { waybill, shipment })
              .then(({data}) => {
                let id = data.data.waybill.waybill_id
-               dispatch('fetchWaybills')
+               dispatch('getWaybillList')
                router.push(`/waybill/${id}`)
                resolve(data)
              })
              .catch((error) => reject(error))
       })
     },
-    // submitWaybill({dispatch, commit}, {waybill, shipment, router}) {
-    //   axios.post(`${URL}/waybill`, { waybill, shipment })
-    //        .then(({data}) => {
-    //          let id = data.data.waybill.waybill_id
-    //          dispatch('fetchWaybills')
-    //          router.push(`/waybill/${id}`)
-    //        })
-    //        .catch(() => console.log('some error'))
-    // },
     deleteWaybillById({dispatch, commit}, {id, router}) {
       axios.delete(`${URL}/waybill/${id}`)
            .then(({data}) => {
              router.push('/waybill')
-             dispatch('fetchWaybills')
+             dispatch('getWaybillList')
            })
-    }
+    },
   }
 })
