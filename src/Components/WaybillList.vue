@@ -1,10 +1,12 @@
 <template>
   <div>
-    <div class="body">
-      <h1>Список накладных</h1>
-      <p>
-        <router-link to="/waybill/new">Создать новую накладную</router-link>
-      </p>
+    <div>
+      <div class="body">
+        <h1>Список накладных</h1>
+        <p>
+          <router-link to="/waybill/new">Создать новую накладную</router-link>
+        </p>
+      </div>
       <div class="table">
         <div class="header">
           <div class="date">Дата</div>
@@ -32,10 +34,10 @@
 <style scoped>
   .header { color: #ccc; align-items: center; }
   .header input { width: 100%; box-sizing: border-box; }
-  .item.router-link-active, .item.router-link-active:hover { background: rgb(14,82,254); color: white; text-decoration: none; }
+  .item.router-link-active, .item.router-link-active:hover { background: linear-gradient(to bottom, rgb(14,122,254), rgb(14,82,254)); color: white; text-decoration: none; }
   .item:hover { background: rgba(0,0,0,.01); cursor: pointer; }
   .table { display: flex; flex-flow: column nowrap; line-height: 1.5; }
-  .table > * { display: flex; flex-flow: row nowrap; min-height: 2.5rem; align-items: top; }
+  .table > * { padding: 0 .3rem; display: flex; flex-flow: row nowrap; min-height: 2.5rem; align-items: top; }
   .table > * > * { display: flex; flex-flow: column nowrap; flex-basis: 250px; padding: .5rem .2rem; }
   .table > * > *.number { text-align: right; flex-basis: 100px; }
   .date { flex-basis: 120px; }
@@ -59,15 +61,35 @@
 </style>
 
 <script>
-  import Pane from './Pane.vue';
+  import axios from 'axios'
+  import Pane from './Pane.vue'
 
   export default {
     components: { Pane },
+    // data() {
+    //   return { 
+    //     waybillList: cloneDeep(this.$store.state.waybillList),
+    //   }
+    // },
     computed: {
       waybillList() {
         return this.$store.state.waybillList
       }
     },
+    // watch: {
+    //   waybillListFromState() {
+    //     this.waybillList = cloneDeep(this.$store.state.waybillList)
+    //   }
+    // },
+    created() {
+      // axios.get(`${URL}/waybill`)
+      //      .then(({data}) => this.waybillList = data.data.waybill);
+    },
+    // computed: {
+    //   waybillList() {
+    //     return this.$store.state.waybillList
+    //   }
+    // },
     mounted() {
       this.$store.dispatch('getWaybillList');
     },

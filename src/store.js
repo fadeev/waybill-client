@@ -7,11 +7,15 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     waybillList: [],
+    productList: [],
   },
   mutations: {
     getWaybillList(state, waybillList) {
       state.waybillList = waybillList;
     },
+    getProductList(state, productList) {
+      state.productList = productList;
+    }
   },
   actions: {
     getWaybillList({commit}) {
@@ -36,6 +40,20 @@ export default new Vuex.Store({
              router.push('/waybill')
              dispatch('getWaybillList')
            })
+    },
+    getProductList({commit}) {
+        axios.get(`${URL}/product`)
+             .then(({data: {data: {product}}}) => {
+               commit('getProductList', product.map(p => { p.changed = null; return p }))
+             })
+    },
+    postProductList({dispatch, commit}, {productList}) {
+        axios.all(
+          productList
+            .filter(p => p.changed)
+            .map(p => axios.post(`${URL}/product`, {product: p})))
+          .then(x => dispatch('getProductList'))
+          .catch(x => x)
     },
   }
 })

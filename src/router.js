@@ -13,7 +13,7 @@ Vue.use(VueRouter);
 export default new VueRouter({
   mode: 'history',
   routes: [
-    { path: '/', component: Home },
+    { path: '/', redirect: "/waybill" },
     {
       path: '/waybill',
       component: WaybillList,
@@ -27,6 +27,7 @@ export default new VueRouter({
     },
     {
       path: '/register',
+      name: 'register',
       component: Register,
     },
   ]

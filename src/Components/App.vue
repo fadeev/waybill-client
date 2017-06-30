@@ -6,8 +6,8 @@
 </template>
 
 <style>
-  html { width:100vw; overflow-x: hidden; }
-  body { margin: 0; font-family: sans-serif; }
+  html { width:100vw; overflow-x: hidden; height: 100%; }
+  body { margin: 0; font-family: sans-serif; height: 100%; }
   h1 { font-weight: normal; font-size: 1.5rem; }
   h1 input { font-size: inherit; }
   input, select { font-size: inherit; font-family: inherit; padding: .3rem; border: 1px solid rgba(0,0,0,.15); box-sizing: border-box; }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :class="{changes: true, open: listChanged}">
+    <div :class="{changes: true, open: productListChanged}">
       Были внесены изменения о {{productList && productList.filter(x => x.changed).length}} ед. товаров
       <button @click.prevent="submitProductList">Сохранить изменения</button>
     </div>
@@ -10,16 +10,22 @@
     </div>
     <div class="table body" v-if="productList">
       <div class="header">
-        <div class="text">Наименование</div>
+        <div class="narrow"></div>
+        <div class="text">
+          Наименование
+        </div>
         <div class="number">Ед. измерения</div>
         <div class="number">Цена продажи</div>
       </div>
       <div v-for="product in productList" :key="product.product_id">
+        <div class="narrow">
+          <input type="checkbox" :checked="product.changed" disabled>
+        </div>
         <div class="text">
-          <input type="text" v-model="product.name" @input="change(product)" :class="{changed: product.changed}">
+          <input type="text" v-model="product.name" @input="change(product)">
         </div>
         <div class="number">
-          <select v-model="product.unit" @input="change(product)" :class="{changed: product.changed}">
+          <select v-model="product.unit" @input="change(product)">
             <option value="1">кг</option>
             <option value="2">шт.</option>
           </select>
@@ -43,8 +49,8 @@
   .table > * > *.text input { flex-basis: 100%; }
   .table > * > *.number { flex-basis: 150px; text-align: right; justify-content: flex-end; }
   .table .header { color: #ccc; }
-
-  .changed { box-shadow: 0 0 0 3px #ffe77f; }
+  .narrow { flex-basis: 20px; }
+  .changed { border: 1px solid #ffe77f; }
 
   button { padding: .25rem .7rem; font-size: inherit; background: none; border-radius: 3px; ; border: 1px solid rgba(0,0,0,.15); }
   button:active { background: #fcfcfc; transform: scale(.99); }
@@ -59,34 +65,43 @@
   import forEach from 'lodash/forEach';
 
   export default {
-    data: () => ({
-      productList: null,
-    }),
-    created() {
-      this.getProductList();
+    // data: () => ({
+    //   productList: null,
+    // }),
+    mounted() {
+      this.$store.dispatch('getProductList')
+      // this.productList = this.$store.state.productList;
+      // this.$store.dispatch('getProductList')
+      //     .then(data => this.productList = data)
+      // this.getProductList();
     },
     computed: {
-      listChanged() {
-        if (this.productList) return this.productList.filter(x => x.changed).length
+      productList() {
+        return this.$store.state.productList;
+      },
+      productListChanged() {
+        if (this.productList)
+          return this.productList.filter(x => x.changed).length
       }
     },
     methods: {
-      getProductList() {
-        axios.get(`${URL}/product`)
-             .then(({data: {data: {product}}}) => {
-               this.productList = product.map(p => { p.changed = null; return p })
-             })
-      },
+      // getProductList() {
+      //   axios.get(`${URL}/product`)
+      //        .then(({data: {data: {product}}}) => {
+      //          this.productList = product.map(p => { p.changed = null; return p })
+      //        })
+      // },
       change(product) {
         product.changed = true;
       },
       submitProductList() {
-        axios.all(
-          this.productList
-            .filter(p => p.changed)
-            .map(p => axios.post(`${URL}/product`, {product: p})))
-          .then(x => this.getProductList())
-          .catch(x => x)
+        this.$store.dispatch('postProductList', {productList: this.productList})
+        // axios.all(
+        //   this.productList
+        //     .filter(p => p.changed)
+        //     .map(p => axios.post(`${URL}/product`, {product: p})))
+        //   .then(x => this.$store.dispatch('getProductList'))
+        //   .catch(x => x)
       },
     },
   }

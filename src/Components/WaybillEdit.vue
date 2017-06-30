@@ -1,10 +1,11 @@
 <template>
   <div>
-    <Pane>
+    <Pane class="pane">
       <Waybill :id="id"></Waybill>
     </Pane>
   </div>
 </template>
+
 <script>
   import Pane from './Pane.vue';
   import Waybill from './Waybill.vue';
