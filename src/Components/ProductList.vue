@@ -1,8 +1,10 @@
 <template>
   <div>
     <div :class="{changes: true, open: productListChanged}">
-      Были внесены изменения о {{productList && productList.filter(x => x.changed).length}} ед. товаров
-      <button @click.prevent="submitProductList">Сохранить изменения</button>
+      <div>
+        Были внесены изменения о {{productListChanged}} ед. товаров
+        <button @click.prevent="submitProductList">Сохранить изменения</button>
+      </div>
     </div>
     <div class="body">
       <h1>Список товаров</h1>
@@ -11,9 +13,8 @@
     <div class="table body" v-if="productList">
       <div class="header">
         <div class="narrow"></div>
-        <div class="text">
-          Наименование
-        </div>
+        <div class="text">Наименование</div>
+        <div class="number">Остаток</div>
         <div class="number">Ед. измерения</div>
         <div class="number">Цена продажи</div>
       </div>
@@ -22,10 +23,13 @@
           <input type="checkbox" :checked="product.changed" disabled>
         </div>
         <div class="text">
-          <input type="text" v-model="product.name" @input="change(product)">
+          <input type="text" v-model="product.name" @input="product.changed = true">
         </div>
         <div class="number">
-          <select v-model="product.unit" @input="change(product)">
+          {{product.stock_quantity}}
+        </div>
+        <div class="number">
+          <select v-model="product.unit" @input="product.changed = true">
             <option value="1">кг</option>
             <option value="2">шт.</option>
           </select>
@@ -55,25 +59,16 @@
   button { padding: .25rem .7rem; font-size: inherit; background: none; border-radius: 3px; ; border: 1px solid rgba(0,0,0,.15); }
   button:active { background: #fcfcfc; transform: scale(.99); }
 
-  .changes { transform: translateY(100%); position: fixed; bottom: 0; background: #ffe77f; padding: 1rem .5rem; width: 100vw; transition: .5s transform; }
+  .changes { transform: translateY(100%); position: fixed; bottom: 0; width: 100vw; transition: .5s transform; }
+  .changes div { background: #ffe77f; margin: 1rem; padding: 1rem; border-radius: 5px; }
   .open { transform: translateY(0); }
   .changes button { background: white; }
 </style>
 
 <script>
-  import axios from 'axios';
-  import forEach from 'lodash/forEach';
-
   export default {
-    // data: () => ({
-    //   productList: null,
-    // }),
     mounted() {
       this.$store.dispatch('getProductList')
-      // this.productList = this.$store.state.productList;
-      // this.$store.dispatch('getProductList')
-      //     .then(data => this.productList = data)
-      // this.getProductList();
     },
     computed: {
       productList() {
@@ -85,23 +80,8 @@
       }
     },
     methods: {
-      // getProductList() {
-      //   axios.get(`${URL}/product`)
-      //        .then(({data: {data: {product}}}) => {
-      //          this.productList = product.map(p => { p.changed = null; return p })
-      //        })
-      // },
-      change(product) {
-        product.changed = true;
-      },
       submitProductList() {
         this.$store.dispatch('postProductList', {productList: this.productList})
-        // axios.all(
-        //   this.productList
-        //     .filter(p => p.changed)
-        //     .map(p => axios.post(`${URL}/product`, {product: p})))
-        //   .then(x => this.$store.dispatch('getProductList'))
-        //   .catch(x => x)
       },
     },
   }

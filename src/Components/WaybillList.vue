@@ -66,30 +66,11 @@
 
   export default {
     components: { Pane },
-    // data() {
-    //   return { 
-    //     waybillList: cloneDeep(this.$store.state.waybillList),
-    //   }
-    // },
     computed: {
       waybillList() {
         return this.$store.state.waybillList
       }
     },
-    // watch: {
-    //   waybillListFromState() {
-    //     this.waybillList = cloneDeep(this.$store.state.waybillList)
-    //   }
-    // },
-    created() {
-      // axios.get(`${URL}/waybill`)
-      //      .then(({data}) => this.waybillList = data.data.waybill);
-    },
-    // computed: {
-    //   waybillList() {
-    //     return this.$store.state.waybillList
-    //   }
-    // },
     mounted() {
       this.$store.dispatch('getWaybillList');
     },

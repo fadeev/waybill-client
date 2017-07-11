@@ -5,6 +5,7 @@
       <div><router-link to="/waybill">Накладные</router-link></div>
       <div><router-link to="/product">Товары</router-link></div>
       <div><router-link to="/supplier">Поставщики</router-link></div>
+      <div><router-link to="/sale">Продажи</router-link></div>
       <div><router-link to="/register">Касса</router-link></div>
     </div>
   </div>

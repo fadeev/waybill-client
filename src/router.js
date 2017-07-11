@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 import App from './Components/App.vue'
 import WaybillList from './Components/WaybillList.vue'
 import ProductList from './Components/ProductList.vue'
+import SaleList from './Components/SaleList.vue'
 import WaybillEdit from './Components/WaybillEdit.vue'
 import Register from './Components/Register.vue'
 import Home from './Components/Home.vue'
@@ -29,6 +30,10 @@ export default new VueRouter({
       path: '/register',
       name: 'register',
       component: Register,
+    },
+    {
+      path: '/sale',
+      component: SaleList,
     },
   ]
 })
