@@ -8,7 +8,7 @@
 <style>
   html { width:100vw; overflow-x: hidden; height: 100%; }
   body { margin: 0; font-family: sans-serif; height: 100%; }
-  h1 { font-weight: normal; font-size: 1.5rem; }
+  h1 { font-weight: normal; font-size: 1.5rem; line-height: 2em; }
   h1 input { font-size: inherit; }
   h2 { font-size: 1.2em; font-weight: normal; }
   input, select { font-size: inherit; font-family: inherit; padding: .3rem; border: 1px solid rgba(0,0,0,.15); box-sizing: border-box; }
@@ -37,7 +37,7 @@
   input[type="number"] { text-align: right; }
   input[disabled] { background: inherit; }
 
-  .table { display: flex; flex-flow: column nowrap; flex: 1 1 auto; margin-bottom: 1rem; line-height: 1.5; }
+  .table { display: flex; flex-flow: column nowrap; flex: 0 0 auto; margin-bottom: 1rem; line-height: 1.5; }
   .table > * { align-items: baseline; display: flex; flex-flow: row nowrap; width: 100; align-content: center; background: white; margin-bottom: .4em; }
   .table > * > * { flex-basis: 200px; display: flex; flex-flow: row nowrap; flex-grow: 0; flex-basis: 0; min-width: 0px; padding-right: .4em; justify-content: center; align-items: center; }
   .table.stretch > * > * { flex-grow: 1; }

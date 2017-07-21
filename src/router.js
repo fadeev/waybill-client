@@ -7,6 +7,7 @@ import ProductList from './Components/ProductList.vue'
 import ProductEdit from './Components/ProductEdit.vue'
 import SaleList from './Components/SaleList.vue'
 import WaybillEdit from './Components/WaybillEdit.vue'
+import Waybill from './Components/Waybill.vue'
 import Register from './Components/Register.vue'
 import Sale from './Components/Sale.vue'
 import Inventory from './Components/Inventory.vue'
@@ -23,7 +24,7 @@ export default new VueRouter({
       path: '/waybill',
       component: WaybillList,
       children: [
-        { path: ':id', component: WaybillEdit, props: true },
+        { path: ':id', component: Waybill, props: true },
       ],
     },
     {

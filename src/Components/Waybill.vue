@@ -116,7 +116,7 @@
         </transition>
       </button>
       <!-- <button>Добавить оплату</button> -->
-       <!-- <button class="danger" @click.prevent="deleteWaybillById(id)">Удалить накладную</button>  -->
+      <button class="danger" @click.prevent="deleteWaybillById(id)">Удалить накладную</button>  
     </p>
     <div class="payment" v-if="!waybill.return">
       <h1>Платежи по накладной</h1>
