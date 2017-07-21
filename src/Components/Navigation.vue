@@ -1,12 +1,13 @@
 <template>
   <div v-if="$route.name != 'register'">
     <div class="menu">
-      <!--<div><router-link to="/" exact>Главная страница</router-link></div>-->
-      <div><router-link to="/waybill">Накладные</router-link></div>
-      <div><router-link to="/product">Товары</router-link></div>
-      <div><router-link to="/supplier">Поставщики</router-link></div>
-      <div><router-link to="/sale">Продажи</router-link></div>
-      <div><router-link to="/register">Касса</router-link></div>
+      <router-link to="/waybill">Накладные</router-link>
+      <router-link to="/product">Товары</router-link>
+      <router-link to="/supplier">Поставщики</router-link>
+      <router-link to="/sale">Продажи</router-link>
+      <router-link to="/inventory">Инвентаризация</router-link>
+      <router-link to="/payment">Оплата</router-link>
+      <router-link to="/register">Касса</router-link>
     </div>
   </div>
 </template>

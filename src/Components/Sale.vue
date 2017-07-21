@@ -1,0 +1,11 @@
+<template>
+  <div>
+    Sale
+  </div>
+</template>
+
+<script>
+  export default {
+    
+  }
+</script>

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <Pane class="pane">
-      <Waybill :id="id"></Waybill>
-    </Pane>
+    <pane class="pane">
+      <waybill :id="id"></waybill>
+    </pane>
   </div>
 </template>
 

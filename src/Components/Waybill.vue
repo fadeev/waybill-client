@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <h1>
-      <span>Накладная №</span>
+      <span>{{waybill.return ? 'Возвратная н' : 'Н'}}акладная №</span>
       <input type="text" v-model="waybill.serial_number" placeholder="Номер">
       <span>от</span>
       <input type="date" :value="waybill.original_date" @input="setOriginalDate" placeholder="Дата">
@@ -27,6 +27,32 @@
         </label>
       </div>
     </div>
+    <!-- <div class="options">
+      <div>Оплата</div>
+      <div>
+         <div v-for="payment in paymentList" style="margin-bottom: 5px">
+          <input type="text" v-model="payment.amount">
+          от
+          <input type="date">
+        </div>
+        <div>{{paymentList.reduce((sum, item) => { return sum + item.amount }, 0)}}</div>
+        <div class="drop">
+          <div v-for="payment in paymentList">
+            <input type="number" v-model.number="payment.amount"> ₽ от <input type="date" v-model.date="payment.created_at">
+          </div>  
+        </div>  
+         <input type="number">
+        от
+        <input type="date">
+        <button>Сохранить</button>
+         <div class="drop">
+          <div v-for="payment in paymentList">
+            <input type="number" v-model.number="payment.amount"> ₽ от <input type="date" v-model.date="payment.created_at">
+          </div>  
+        </div> 
+         <div>{{paymentList.reduce((sum, item) => { return sum + item.amount }, 0)}}</div>   
+      </div>
+    </div>    -->
     <div class="options">
       <div>Наценка</div>
       <div>
@@ -34,7 +60,7 @@
         <span>%</span>
       </div>
     </div>
-    <div class="table" v-if="shipment && shipment.length > 0">
+    <div class="table stretch" v-if="shipment && shipment.length > 0">
       <div class="header">
         <div class="text">Наименование</div>
         <div class="number">Количество</div>
@@ -42,14 +68,15 @@
         <div class="number">Цена закупки</div>
         <div class="number">Цена продажи</div>
         <div class="number">Сумма закупки</div>
-        <div class="actions"></div>
+        <div class="narrow"></div>
       </div>
       <div v-for="(s, index) in shipment">
         <div class="text">
           <input type="text" v-model="s.name">
         </div>
         <div class="number">
-          <input type="number" v-model.number="s.quantity" @input="computeSalePrice(s)" v-focus>
+          <input type="number" v-model.number="s.quantity" v-focus>
+          <!--<input type="number" v-model.number="s.quantity" @input="computeSalePrice(s)" v-focus>-->
         </div>
         <div class="number">
           <select v-model="s.unit" tabindex="-1">
@@ -66,7 +93,7 @@
         <div class="number">
           <input type="number" v-model.number="s.cost_total" @input="computeSalePrice(s)">
         </div>
-        <div class="actions">
+        <div class="narrow">
           <a class="delete" href="" @click.prevent="shipment.splice(index, 1)" tabindex="-1">✖</a>
         </div>
       </div>
@@ -77,69 +104,89 @@
         <div class="number"></div>
         <div class="number"></div>
         <div class="number"><span v-if="total">Итого: {{total}}</span></div>
-        <div class="actions"></div>
+        <div class="narrow"></div>
       </div>
     </div>
-    <div>
-      <input type="text" v-model="waybill.product_name" @input="getProduct" placeholder="Добавить наименование">
-      <div v-if="waybill.product_name" class="list">
-        <a v-for="product in waybill.product_list" href="" @click.prevent="selectProduct(product)">{{product.name}}</a>
-        <a href="" @click.prevent="submitProduct(waybill.product_name)">Создать товар "{{waybill.product_name}}"</a>
-      </div>
-    </div>
-    <p>
+    <product-search @selected="pushProduct"></product-search>
+    <p class="actions">
       <button @click='submitWaybill(waybill, shipment)'>
         <span>{{waybill.waybill_id ? 'Сохранить накладную' : 'Создать новую накладную'}}</span>
+        <transition name="fade">
+          <svg v-if="waybill_success" fill="black" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M0 11.386l1.17-1.206c1.951.522 5.313 1.731 8.33 3.597 3.175-4.177 9.582-9.398 13.456-11.777l1.044 1.073-14 18.927-10-10.614z"/></svg>
+        </transition>
       </button>
-      <button href="" @click.prevent="deleteWaybillById(id)">Удалить накладную</button>
-      <transition name="fade">
-        <span v-if="waybill_success" class="success">
-          Накладная успешно сохранена
-        </span>
-      </transition>
+      <!-- <button>Добавить оплату</button> -->
+       <!-- <button class="danger" @click.prevent="deleteWaybillById(id)">Удалить накладную</button>  -->
     </p>
-    <!--<pre>{{waybill}}</pre>
-    <pre>{{shipment}}</pre>-->
+    <div class="payment" v-if="!waybill.return">
+      <h1>Платежи по накладной</h1>
+      <div style="margin-bottom: 5px" v-for="payment in paymentList">
+        <input type="number" v-model="payment.amount" disabled>
+        от
+        <input type="date" v-model="payment.created_at" disabled>
+        <!-- <label>
+          <input type="radio" v-model="payment.method" value="0" disabled>
+          Наличные
+        </label>
+        <label>
+          <input type="radio" v-model="payment.method" value="1" disabled>
+          Банк
+        </label> -->
+        <a href="" class="delete" @click.prevent="deletePayment(payment.payment_id)">✖</a>
+      </div>
+      <div>
+        <input type="number" placeholder="Сумма" v-model="payment.amount">
+        от
+        <input type="date" v-model="payment.created_at">
+        <!-- <label>
+          <input type="radio" v-model="payment.method" value="0">
+          Наличные
+        </label>
+        <label>
+          <input type="radio" v-model="payment.method" value="1">
+          Банк
+        </label> -->
+        <button @click.prevent="submitPayment">Добавить платеж</button>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
+  .main { margin-bottom: 100px; }
   h1 { line-height: 2em; }
   h1 input { width: 14rem; }
   .options { display: flex; margin: 1rem 0; align-items: baseline; }
   .options *:first-child { flex-basis: 15%; }
+  .drop { position: absolute; margin-top: .5rem; background: white; box-shadow: 0 10px 20px -5px rgba(0,0,0,.15); border-radius: 3px; margin-bottom: 3rem; border: 1px solid rgba(0,0,0,.15); padding: .5rem; }
   .list { position: absolute; margin-top: .5rem; background: white; box-shadow: 0 10px 20px -5px rgba(0,0,0,.15); border-radius: 3px; margin-bottom: 3rem; }
   .list > *:first-child { border-top-left-radius: 3px; border-top-right-radius: 3px; border-top: 1px solid rgba(0,0,0,.15); }
   .list > *:last-child { border-bottom-left-radius: 3px; border-bottom-right-radius: 3px; border-bottom: 1px solid rgba(0,0,0,.15); }
   .list a { padding: .5rem; display: block; border-left: 1px solid rgba(0,0,0,.15); border-right: 1px solid rgba(0,0,0,.15); }
   .list a:hover, .list a:focus { background: linear-gradient(to bottom, rgb(14,122,254), rgb(14,82,254)); color: white; text-decoration: none; outline: none; }
-  .table { display: flex; flex-flow: column nowrap; flex: 1 1 auto; margin-bottom: 1rem; align-content: center; }
-  .table > * { display: flex; flex-flow: row nowrap; width: 100; align-content: center; background: white; }
-  .table > * > * { display: flex; flex-flow: row nowrap; flex-grow: 1; flex-basis: 0; min-width: 0px; padding: 0.2rem; justify-content: center; align-items: center; }
-  .table > * > *:first-child { padding-left: 0; }
-  .table .header { color: #ccc; }
-  .table .text { flex-grow: 4; justify-content: flex-start; }
-  .table .number { justify-content: flex-end; }
-  .table .number input { text-align: right; }
-  .table .actions { flex-grow: .2; }
-  .table .actions a { text-decoration: none; }
-  .table input, .table select { width: 100%; }
   .success { color: green; }
-  .fade-enter, .fade-leave-to { opacity: 0; }
-  .fade-enter-active, .fade-leave-active { transition: opacity .5s; }
-  button { padding: .25rem .7rem; font-size: inherit; background: none; border-radius: 3px; ; border: 1px solid rgba(0,0,0,.15); }
-  button:active { background: #fcfcfc; transform: scale(.99); }
-  .success1::after { content: 'ok'; background: red; }
-  .delete { color: rgba(0,0,0,.3); }
   .gray { color: rgba(0,0,0,.3); }
+  .fade-enter-active { animation: fade-in .2s; }
+  .payment { margin-top: 30px; }
+   @keyframes fade-in {
+     from { transform: scale(.5); }
+     75% { transform: scale(1.1); }
+     to { transform: scale(1); }
+   }
+   button { display: inline-flex; align-items: center; }
+   button svg { padding: 0 0 0 8px; }
+   button:active svg { fill: white; }
+   div.actions { margin: 20px 0; display: flex; align-items: center; }
 </style>
 
 <script>
   import axios from 'axios';
   import forEach from 'lodash/forEach';
+  import ProductSearch from './ProductSearch.vue'
 
   export default {
     props: ['id'],
+    components: { ProductSearch },
     data: () => ({
       waybill: {
         waybill_id: null,
@@ -149,12 +196,16 @@
         supplier_name: null,
         supplier_list: null,
         markup: null,
-        product_name: null,
-        product_list: null,
         return: null,
       },
       shipment: [],
       waybill_success: null,
+      paymentList: [],
+      payment: {
+        amount: null,
+        created_at: null,
+        method: null,
+      }
     }),
     mounted() {
       this.getWaybillById(this.id)
@@ -168,7 +219,7 @@
       focus: {
         inserted: function (el) {
           el.focus();
-        }
+       }
       }
     },
     computed: {
@@ -204,23 +255,17 @@
       deleteWaybillById(id) {
         this.$store.dispatch('deleteWaybillById', {id: id, router: this.$router})
       },
-      getProduct(e) {
-        let name = e.target.value;
-        if (name === "") return this.waybill.product_list  = null;
-        axios.get(`${URL}/product?search=${name}`)
-             .then(({data: {data: {product}}}) => this.waybill.product_list = product)
-             .catch(error => console.log(error));
-      },
       resetFields() {
         Object.assign(this.$data, this.$options.data());
       },
       getWaybillById(id) {
         if (this.id === 'new') return this.resetFields();
         axios.get(`${URL}/waybill/${id}`)
-             .then(({data: {data: {waybill, shipment}}}) => {
+             .then(({data: {data: {waybill, shipment, payment}}}) => {
                this.resetFields();
                this.waybill = Object.assign(this.waybill, waybill)
                this.shipment = shipment || []
+               this.paymentList = payment || []
               })
              .catch(error => this.resetFields());
       },
@@ -230,13 +275,6 @@
                this.selectSupplier(supplier_id, name)
              })
              .catch(error => console.log(error))
-      },
-      submitProduct(name) {
-        axios.post(`${URL}/product`, {product: {name: name}})
-             .then(({data: {data: {product}}}) => {
-               this.selectProduct(product)
-             })
-             .catch(error => console.log(error))        
       },
       submitWaybill(waybill, shipment) {
         shipment = shipment || [];
@@ -249,15 +287,35 @@
           })
           .catch(error => console.log('error'))
       },
-      selectProduct(product) {
-        this.waybill.product_name = null;
-        this.waybill.product_list = null;
-        this.shipment.push(Object.assign({quantity: null, sale_price: null, cost_total: null}, product))
-      },
       setOriginalDate(e) {
         let date = e.target.value
         this.waybill.original_date = (date === "" ? null : date)
       },
+      pushProduct(product) {
+        this.shipment.push(product)
+      },
+      getPayment(id) {
+        axios.get(`${URL}/payment?id=${id}`)
+          .then(({data: {data: {payment}}}) => {
+            this.paymentList = payment;
+            Object.assign(this.$data.payment, this.$options.data().payment);
+          })
+      },
+      deletePayment(id) {
+        axios.delete(`${URL}/payment/${id}`)
+          .then(({data}) => {
+            this.getPayment(this.id)
+            this.$store.dispatch('getWaybillList')
+          })
+      },
+      submitPayment() {
+        let payment = Object.assign(this.payment, {waybill_id: this.id})
+        axios.post(`${URL}/payment`, {payment: payment})
+          .then(({data}) => {
+            this.getPayment(this.id)
+            this.$store.dispatch('getWaybillList')
+          })
+      }
     },
   }
 </script>
