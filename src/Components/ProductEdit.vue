@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pane class="pane" width="60">
+    <pane>
       <product :id="id"></product>
     </pane> 
   </div>

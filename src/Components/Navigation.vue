@@ -13,7 +13,7 @@
 </template>
 
 <style scoped>
-  .menu { display: flex; padding: .4rem .7rem; }
+  .menu { display: flex; padding: .4rem 10px; position: relative; background: white; }
   .menu > * { margin-right: 1rem; }
   .router-link-active { color: inherit; text-decoration: none; }
 </style>

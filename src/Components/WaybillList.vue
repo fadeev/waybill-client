@@ -2,9 +2,9 @@
   <div>
     <div class="deck">
       <div>
-        <h1>Список накладных</h1>
+        <h1 class="padd">Список накладных</h1>
         <div class="tb">
-          <div v-for="waybill in waybillList">
+          <router-link class="item" :to="`/waybill/${waybill.waybill_id}`" tag="div" v-for="waybill in waybillList">
             <!-- <div>{{waybill.original_date_day_month}}</div> -->
             <!-- <div>{{waybill.serial_number ? `№ ${waybill.serial_number}` : ''}}</div> -->
             <div class="date">
@@ -21,26 +21,40 @@
               </div>
               <span v-if="waybill.return">возврат</span>
             </div>
-          </div>
+          </router-link>
         </div>
       </div>
     </div>
-    <!-- <div class="pane"><router-view></router-view></div> -->
-    <pane><router-view></router-view></pane>
+    <pane v-if="id">
+      <router-view></router-view>
+    </pane>
+    <!-- <div class="backdrop">
+      <div class="page">
+        <router-view></router-view>
+      </div>
+    </div>  -->
+    <!-- <pane><router-view></router-view></pane> -->
   </div>
 </template>
 
 <style scoped>
-  .deck { display: flex; }
+  .deck { display: flex; padding: 0 5px; }
+
+  .padd { padding: 0 5px; }
 
   .tb { display: flex; flex-direction: column;  }
-  .tb > * { display: flex; flex-direction: row; flex-grow: 0; margin-bottom: 10px; }
-  .tb > * > * { width: 200px; }
+  .tb > * { display: flex; flex-direction: row; flex-grow: 0; }
+  .tb > * > * { width: 200px; padding: 10px 5px; }
   .tb .date { width: 120px; }
   .tb .number { width: 100px; text-align: right; }
 
-  .pane { position: absolute; height: 100vh; top: 30px; left: 320px; right: 0; overflow-y: scroll; }
-
+  .item { cursor: pointer; }
+  .router-link-active, .router-link-active:hover { border-radius: 2px; background: linear-gradient(to bottom, rgb(14,122,254), rgb(14,82,254)); color: white; text-decoration: none; }  
+/*  
+  .backdrop { width: 100vw; height: 100vh; position: fixed; top: 0; visibility: hidden; }
+  .pane { visibility: visible; left: 350px; padding-top: 30px; padding-left: 20px; position: absolute; width: calc(100vw - 300px); bottom: 0; top: 0; overflow-y: scroll; }
+  .pane > * { padding-right: 40px; background: white; }   
+  */
   .meek { font-size: .75em; color: #ccc; }
 </style>
 
