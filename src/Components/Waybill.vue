@@ -5,7 +5,7 @@
       <input type="text" v-model="waybill.serial_number" placeholder="Номер">
       <span>от</span>
       <input type="date" :value="waybill.original_date" @input="setOriginalDate" placeholder="Дата">
-    </h1>
+    </h1> 
     <div class="options">
       <div>Поставщик</div>
       <div>
@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="options">
-      <div>Возвратная накладная</div>
+      <div>Возврат</div>
       <div>
         <label>
           <input type="checkbox" v-model="waybill.return">
@@ -27,49 +27,33 @@
         </label>
       </div>
     </div>
-    <!-- <div class="options">
-      <div>Оплата</div>
-      <div>
-         <div v-for="payment in paymentList" style="margin-bottom: 5px">
-          <input type="text" v-model="payment.amount">
-          от
-          <input type="date">
-        </div>
-        <div>{{paymentList.reduce((sum, item) => { return sum + item.amount }, 0)}}</div>
-        <div class="drop">
-          <div v-for="payment in paymentList">
-            <input type="number" v-model.number="payment.amount"> ₽ от <input type="date" v-model.date="payment.created_at">
-          </div>  
-        </div>  
-         <input type="number">
-        от
-        <input type="date">
-        <button>Сохранить</button>
-         <div class="drop">
-          <div v-for="payment in paymentList">
-            <input type="number" v-model.number="payment.amount"> ₽ от <input type="date" v-model.date="payment.created_at">
-          </div>  
-        </div> 
-         <div>{{paymentList.reduce((sum, item) => { return sum + item.amount }, 0)}}</div>   
-      </div>
-    </div>    -->
     <div class="options">
       <div>Наценка</div>
       <div>
         <input type="text" v-model.number="waybill.markup" @input="computeSalePriceForEach" placeholder="Наценка">
         <span>%</span>
       </div>
-    </div>
-    <div class="table stretch" v-if="shipment && shipment.length > 0">
+    </div> 
+    <!-- <div class="table stretch" v-if="shipment && shipment.length > 0"> -->
+    <div class="table stretch">
       <div class="header">
         <div class="text">Наименование</div>
         <div class="number">Количество</div>
-        <div class="number">Ед. измерения</div>
+        <div class="number">Единицы</div>
         <div class="number">Цена закупки</div>
         <div class="number">Цена продажи</div>
         <div class="number">Сумма закупки</div>
         <div class="narrow"></div>
       </div>
+      <!-- <div class="header">
+        <div class="text"></div>
+        <div class="number"></div>
+        <div class="number"></div>
+        <div class="number"></div>
+        <div class="number"><input type="text" v-model.number="waybill.markup" @input="computeSalePriceForEach" placeholder="Наценка"></div>
+        <div class="number"></div>
+        <div class="narrow"></div>
+      </div> -->
       <div v-for="(s, index) in shipment">
         <div class="text">
           <input type="text" v-model="s.name">
@@ -98,27 +82,31 @@
         </div>
       </div>
       <div>
-        <div class="text"></div>
+        <div class="text"><product-search @selected="pushProduct"></product-search></div>
         <div class="number"></div>
         <div class="number"></div>
         <div class="number"></div>
         <div class="number"></div>
-        <div class="number"><span v-if="total">Итого: {{total}}</span></div>
+        <div class="number"><span v-if="total">{{total}}</span></div>
         <div class="narrow"></div>
       </div>
     </div>
-    <product-search @selected="pushProduct"></product-search>
-    <p class="actions">
-      <button @click='submitWaybill(waybill, shipment)'>
+    <!-- <div><product-search @selected="pushProduct"></product-search></div> -->
+    <div class="actions" style="display: flex; align-items: center;">
+      <button @click='waybill_success ? submitWaybill(waybill, shipment) : false' :disabled="!waybill_success">
         <span>{{waybill.waybill_id ? 'Сохранить накладную' : 'Создать новую накладную'}}</span>
-        <transition name="fade">
+        <!-- <transition name="fade">
           <svg v-if="waybill_success" fill="black" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M0 11.386l1.17-1.206c1.951.522 5.313 1.731 8.33 3.597 3.175-4.177 9.582-9.398 13.456-11.777l1.044 1.073-14 18.927-10-10.614z"/></svg>
-        </transition>
+        </transition> -->
       </button>
+      <!-- <div class="scss" v-if="waybill_success">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="rgb(14,122,254)" width="30" height="30" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12"/></svg>
+        <svg class="check" fill="white" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="M0 11.386l1.17-1.206c1.951.522 5.313 1.731 8.33 3.597 3.175-4.177 9.582-9.398 13.456-11.777l1.044 1.073-14 18.927-10-10.614z"/></svg>
+      </div> -->
       <!-- <button>Добавить оплату</button> -->
-      <button class="danger" @click.prevent="deleteWaybillById(id)">Удалить накладную</button>  
-    </p>
-    <div class="payment" v-if="!waybill.return">
+      <!-- <button class="danger" @click.prevent="deleteWaybillById(id)">Удалить накладную</button>   -->
+    </div>
+    <div class="payment" v-if="!waybill.return && id != 'new'">
       <h1>Платежи по накладной</h1>
       <div style="margin-bottom: 5px" v-for="payment in paymentList">
         <input type="number" v-model="payment.amount" disabled>
@@ -153,6 +141,7 @@
 </template>
 
 <style scoped>
+  button[disabled] { opacity: .3; }
   .main { margin-bottom: 100px; }
   h1 { line-height: 2em; }
   h1 input { width: 14rem; }
@@ -199,13 +188,13 @@
         return: null,
       },
       shipment: [],
-      waybill_success: null,
+      waybill_success: true,
       paymentList: [],
       payment: {
         amount: null,
         created_at: null,
         method: null,
-      }
+      },
     }),
     mounted() {
       this.getWaybillById(this.id)
@@ -244,7 +233,9 @@
         let name = e.target.value;
         if (name === "") this.waybill.supplier_list = null
         axios.get(`${URL}/supplier?search=${name}`)
-             .then(({data: {data: {supplier}}}) => this.waybill.supplier_list = supplier)
+             .then(({data: {data: {supplier}}}) => {
+               this.waybill.supplier_list = supplier
+             })
              .catch(error => console.log(error));
       },
       selectSupplier(id, name) {
@@ -278,12 +269,13 @@
       },
       submitWaybill(waybill, shipment) {
         shipment = shipment || [];
+        this.waybill_success = null;
         this.$store.dispatch('postWaybill', {waybill, shipment, router: this.$router})
           .then(data => {
             this.waybill_success = true;
-            setTimeout(() => {
-              this.waybill_success = null;
-            }, 5000)
+            // setTimeout(() => {
+            //   this.waybill_success = null;
+            // }, 5000)
           })
           .catch(error => console.log('error'))
       },

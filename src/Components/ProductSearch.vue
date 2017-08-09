@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div style="width:100%">
     <input type="text" v-model="name" @input="get" placeholder="Добавить наименование">
-    <div v-if="name" class="list">
+    <div v-if="name && show" class="list">
       <a v-for="product in list" :key="product.product_id" href="" @click.prevent="select(product)">{{product.name}}</a>
       <a href="" @click.prevent="submit(name)">Создать товар "{{name}}"</a>
     </div>
@@ -15,14 +15,24 @@
     data: () => ({
       name: null,
       list: null,
+      show: null,
     }),
     methods: {
       get(e) {
         let name = e.target.value;
-        if (name === "") return this.list  = null;
+        if (name === "") {
+          this.show = false;
+          return this.list  = null;
+        }
         axios.get(`${URL}/product?search=${name}`)
-             .then(({data: {data: {product}}}) => this.list = product)
-             .catch(error => console.log(error));
+             .then(({data: {data: {product}}}) => {
+               this.list = product
+               this.show = true
+             })
+             .catch(error => {
+               this.show = true
+               console.log(error)
+             });
       },
       select(product) {
         this.name = null;

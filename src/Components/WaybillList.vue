@@ -2,168 +2,134 @@
   <div>
     <div class="deck">
       <div>
-        <h1 class="padd">Список накладных</h1>
+        <h1 class="padd">
+          <router-link :to="`/waybill`">Накладные</router-link>
+        </h1>
+        <!-- <h1 class="padd">Жуйков</h1> -->
+        <!-- <div>
+          <div class="tb">
+            <div class="header">
+              <div class="date"></div>
+              <div></div>
+              <div class="number">Сумма</div>
+              <div class="number"></div>
+            </div>
+            <div>
+              <div class="date"></div>
+              <div></div>
+              <div class="number"></div>
+              <div class="number"></div>
+            </div>
+          </div>
+        </div> -->
+        <!-- <p><a @click="newWaybill" :class="{toggle: true, selection: id == 'new'}">Создать новую накладную</a></p> -->
         <div class="tb">
-          <router-link class="item" :to="`/waybill/${waybill.waybill_id}`" tag="div" v-for="waybill in waybillList">
-            <!-- <div>{{waybill.original_date_day_month}}</div> -->
-            <!-- <div>{{waybill.serial_number ? `№ ${waybill.serial_number}` : ''}}</div> -->
+          <div class="header">
+            <div class="date">Дата</div>
+            <div>
+              <!-- <input type="text" placeholder="Поставщик"> -->
+              <input type="text" v-model="supplier.name" @input="getSupplier" placeholder="Поставщик">
+              <div class="list" v-if="!supplier.id && supplier.name">
+                <a v-for="s in supplier_list" href="" @click.prevent="selectSupplier(s.supplier_id, s.name)">
+                  {{s.name}}
+                </a>
+              </div>
+              <!-- <div v-if="!waybill.supplier_id && waybill.supplier_name" class="list">
+                <a v-for="supplier in waybill.supplier_list" href="" @click.prevent="selectSupplier(supplier.supplier_id, supplier.name)">
+                  {{supplier.name}}
+                </a>
+                <a href="" @click.prevent="submitSupplier(waybill.supplier_name)">Создать поставщика "{{waybill.supplier_name}}"</a>          
+              </div> -->
+            </div>
+            <div class="number" v-if="!id">Сумма</div>
+            <div class="number" v-if="!id">Платежи</div>
+          </div>
+          <div @click="editWaybill(waybill, $event)" :class="{item: true, selection: id == waybill.waybill_id, visibility: isWaybillShown(waybill.supplier_id)}" v-for="waybill in waybillList">
             <div class="date">
-              {{waybill.original_date_day_month}}
+              {{day_month(waybill.original_date)}}
               <div class="meek">{{waybill.serial_number ? `№ ${waybill.serial_number}` : ''}}</div>
             </div> 
             <div>{{waybill.name ? waybill.name : 'н/д'}}</div>
             <div class="number" v-if="!id">
-              <strong>{{waybill.cost_total || 0}} ₽</strong>
+              {{(waybill.cost_total || 0).toFixed(2)}}
+              <span class="unit">₽</span>
             </div> 
             <div class="number" v-if="!id">
-              <div v-if="!waybill.return">
-                {{waybill.payment_amount || 0}} ₽
+              <div :class="{green: waybill.payment_amount >= waybill.cost_total, red: waybill.payment_amount < waybill.cost_total}" v-if="!waybill.return">
+                {{(waybill.payment_amount || 0).toFixed(2)}}
+                <span class="unit">₽</span>
               </div>
               <span v-if="waybill.return">возврат</span>
             </div>
-          </router-link>
+          </div>
         </div>
       </div>
     </div>
     <pane v-if="id">
       <router-view></router-view>
     </pane>
-    <!-- <div class="backdrop">
-      <div class="page">
-        <router-view></router-view>
-      </div>
-    </div>  -->
-    <!-- <pane><router-view></router-view></pane> -->
   </div>
 </template>
 
 <style scoped>
-  .deck { display: flex; padding: 0 5px; }
-
-  .padd { padding: 0 5px; }
-
-  .tb { display: flex; flex-direction: column;  }
-  .tb > * { display: flex; flex-direction: row; flex-grow: 0; }
-  .tb > * > * { width: 200px; padding: 10px 5px; }
-  .tb .date { width: 120px; }
-  .tb .number { width: 100px; text-align: right; }
-
-  .item { cursor: pointer; }
-  .router-link-active, .router-link-active:hover { border-radius: 2px; background: linear-gradient(to bottom, rgb(14,122,254), rgb(14,82,254)); color: white; text-decoration: none; }  
-/*  
-  .backdrop { width: 100vw; height: 100vh; position: fixed; top: 0; visibility: hidden; }
-  .pane { visibility: visible; left: 350px; padding-top: 30px; padding-left: 20px; position: absolute; width: calc(100vw - 300px); bottom: 0; top: 0; overflow-y: scroll; }
-  .pane > * { padding-right: 40px; background: white; }   
-  */
-  .meek { font-size: .75em; color: #ccc; }
+  .visibility { display: none; }
 </style>
-
-<nope>
-  <div>
-    <div>
-      <div class="body">
-      </div>
-      <div class="layout">
-        <div>
-          <h1 class="space">Список накладных</h1>
-          <p class="space">
-            <router-link to="/waybill/new">Создать новую накладную</router-link>
-          </p>
-          <div class="tablenew">
-            <div class="header">
-              <div class="text date">Дата</div>
-              <div class="text">Поставщик</div>
-              <div class="number" v-if="!id">Сумма</div> 
-              <div class="number" v-if="!id">Оплачено</div>
-              <!-- <div class="narrow"></div> -->
-            </div>
-            <router-link class="item" :to="`/waybill/${waybill.waybill_id}`" v-for="waybill in waybillList" tag="div" :key="waybill.waybill_id">
-              <div class="text date">
-                <div>
-                  {{waybill.original_date_day_month}}
-                  <br>
-                  <div class="serial">{{waybill.serial_number ? `№ ${waybill.serial_number}` : ''}}</div>
-                </div>
-              </div>
-              <div class="text">
-                {{waybill.name ? waybill.name : 'н/д'}}
-              </div>
-              <div class="number" v-if="waybill.waybill_id != id">
-                <strong>{{waybill.cost_total || 0}} ₽</strong>
-              </div> 
-              <div class="number" v-if="waybill.waybill_id != id">
-                <div :class="{green: waybill.payment_amount >= waybill.cost_total, red: waybill.payment_amount < waybill.cost_total}" v-if="!waybill.return">
-                  {{waybill.payment_amount || 0}} ₽
-                </div>
-                <span v-if="waybill.return">возврат</span>
-                <!-- <svg v-if="waybill.return" style="padding: 0 10px" fill="#ccc" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M17.026 22.957c10.957-11.421-2.326-20.865-10.384-13.309l2.464 2.352h-9.106v-8.947l2.232 2.229c14.794-13.203 31.51 7.051 14.794 17.675z"/></svg> -->
-              </div>
-              <!-- <div class="narrow">
-                <svg v-if="waybill.return" style="padding: 0 10px" fill="#ccc" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M17.026 22.957c10.957-11.421-2.326-20.865-10.384-13.309l2.464 2.352h-9.106v-8.947l2.232 2.229c14.794-13.203 31.51 7.051 14.794 17.675z"/></svg>
-              </div> -->
-              <!-- <div class="waybill" style="position: absolute; width: 50%; margin-left: 400px;" v-if="waybill.waybill_id == id"><router-view></router-view></div> -->
-            </router-link>
-          </div>
-        </div>
-        <!-- <div style="flex-grow: 1;">
-          <div style="padding: 0 20px;">
-            <router-view></router-view>
-          </div>
-        </div> -->
-      </div>
-    </div>
-  </div>
-</nope>
-
-<nope scoped>
-  .space { margin-left: .7rem; }
-
-  .tablenew { display: flex; flex-direction: column; line-height: 1.3em; margin-left: .4rem; }
-  .tablenew > * { display: flex; flex-direction: row; padding: .2rem .3rem; }
-  .tablenew > * > * { width: 200px; padding-bottom: .2rem; }
-  .tablenew .date { width: 120px; }
-  .tablenew .number { width: 100px; text-align: right; }
-  .tablenew .serial { font-size:.75rem; color: #ccc; }
-
-  .header { color: #ccc; align-items: center; }
-  .header input { width: 100%; box-sizing: border-box; } 
-  /* .item.router-link-active, .item.router-link-active:hover { border-radius: 2px; background: linear-gradient(to bottom, rgb(14,122,254), rgb(14,82,254)); color: white; text-decoration: none; }  */
-  /* .item.router-link-active .serial { color: white; } */
-  .item:hover { background: rgba(0,0,0,.01); cursor: pointer; }
-  .table { flex-grow: 0; }
-  .table > * { padding: 0 .3rem; }
-  
-  .waybill { color: black; background: white; }
-
-  /* .table > * > * { flex-basis: 150px; padding: .5rem .2rem; } */
-  /* .table .narrow { flex-basis: 80px; }
-  .table .number { flex-basis: 100px; } */
-  /* .table .text.date { width: 120px; }
-  .table .text { width: 200px; } */
-  .table .serial { font-size:.75rem; color: #ccc; }
-  .green { color: #4ec63d; }
-  .red { color: red; }
-</nope>
 
 <script>
   import axios from 'axios'
+  import { day_month } from '../helper.js'
   import Pane from './Pane.vue'
 
   export default {
     components: { Pane },
+    data: () => ({
+      supplier: {
+        name: null,
+        id: null,
+      },
+      supplier_list: null,
+      x: null,
+      y: null,
+    }),
     computed: {
       waybillList() {
         return this.$store.state.waybillList
       },
       id() {
         return this.$route.params.id
-      }
+      },
     },
     mounted() {
       this.$store.dispatch('getWaybillList');
     },
     methods: {
-      test() {console.log('test')}
+      day_month: day_month,
+      getSupplier(e) {
+        this.supplier.id = null;
+        let name = e.target.value;
+        if (name === "") this.supplier_list = null
+        axios.get(`${URL}/supplier?search=${name}`)
+             .then(({data: {data: {supplier}}}) => this.supplier_list = supplier)
+             .catch(error => console.log(error));
+      },
+      selectSupplier(id, name) {
+        axios.get(`${URL}/supplier/${id}`)
+          .then(x => console.log(x))
+        this.supplier.id = id;
+        this.supplier.name = name;
+        this.supplier_list = null;
+      },
+      newWaybill() {
+        if (this.id == 'new') return this.$router.push("/waybill")
+        if (this.id != 'new') return this.$router.push("/waybill/new")
+      },
+      editWaybill(waybill) {
+        if (this.id == waybill.waybill_id) return this.$router.push("/waybill")
+        if (this.id != waybill.waybill_id) return this.$router.push(`/waybill/${waybill.waybill_id}`)
+      },
+      isWaybillShown(id) {
+        return this.supplier.id  && this.supplier.id != id
+      },
     }
   }
 </script>

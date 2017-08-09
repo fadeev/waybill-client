@@ -9,6 +9,7 @@ export default new Vuex.Store({
     waybillList: [],
     productList: [],
     saleList: [],
+    revenueList: [],
   },
   mutations: {
     getWaybillList(state, waybillList) {
@@ -19,6 +20,9 @@ export default new Vuex.Store({
     },
     getSaleList(state, saleList) {
       state.saleList = saleList
+    },
+    getRevenueList(state, revenueList) {
+      state.revenueList = revenueList
     },
   },
   actions: {
@@ -48,7 +52,7 @@ export default new Vuex.Store({
     getProductList({commit}) {
         axios.get(`${URL}/product`)
              .then(({data: {data: {product}}}) => {
-               commit('getProductList', product.map(p => { p.changed = null; return p }))
+               commit('getProductList', product.map(p => { p.selected = false; p.quantity = null; return p }))
              })
     },
     postProductList({dispatch, commit}, {productList}) {
@@ -63,6 +67,11 @@ export default new Vuex.Store({
       axios
         .get(`${URL}/sale`)
         .then(({data: {data: {sale}}}) => commit('getSaleList', sale))
+    },
+    getRevenueList({commit}) {
+      axios
+        .get(`${URL}/revenue`)
+        .then(({data: {data: {revenue}}}) => commit('getRevenueList', revenue))
     },
   }
 })

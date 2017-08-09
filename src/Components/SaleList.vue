@@ -1,19 +1,23 @@
 <template>
   <div>
-    <div class="body">
-      <h1>
-        Список продаж
+    <div class="deck">
+      <h1 class="padd">
+        <router-link :to="`/sale/date`">Выручка</router-link>
       </h1>
-    </div>
-    <div v-for="(saleListItem, month) in saleList">
-      <div class="table">
-        <div>
-          <div class="text">{{month}}</div>
+      <div v-for="(revenueItem, month) in revenueList">
+        <div class="tb">
+          <div class="header">
+            <div class="date">{{month}}</div>
+            <div class="number" style="width:200px">Выручка</div>
+          </div>
+          <div v-for="day in revenueItem" :class="{'item': true, 'selection': date == day.yyyymmdd}" @click="selectSale(day)" tag="div">
+            <div class="date">{{day.dd}}</div>
+            <div class="number" style="width:200px">
+              {{day.sum.toFixed(2)}}
+              <span class="unit">₽</span>
+            </div>
+          </div>
         </div>
-        <router-link v-for="day in saleListItem" :to="`/sale/`" tag="div">
-          <div class="narrow text">{{day.dd}}</div>
-          <div class="number">{{day.sum}} ₽</div>
-        </router-link>
       </div>
     </div>
     <router-view></router-view>
@@ -31,20 +35,23 @@
 
   export default {
     computed: {
-      saleList() {
-        return _.groupBy(_.sortBy(this.$store.state.saleList, ['mm', 'dd']).reverse(), 'tmm')
-      }
+      revenueList() {
+        return _.groupBy(_.sortBy(this.$store.state.revenueList, ['mm', 'dd']).reverse(), 'tmm')
+      },
+      date() {
+        return this.$route.params.date
+      },
     },
     mounted() {
-      this.$store.dispatch('getSaleList')
+      this.$store.dispatch('getRevenueList')
     },
     methods: {
       sortBy(array, key) {
         return _.sortBy(array, key).reverse()
       },
-      test() {
-        console.log(123)
-      },
+      selectSale(sale) {
+        this.$router.push(`/sale/date/${sale.yyyymmdd}`)
+      }
     },
   }
 </script>

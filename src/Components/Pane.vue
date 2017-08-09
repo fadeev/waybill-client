@@ -1,39 +1,18 @@
 <template>
-  <div class="backdrop">
-    <!-- <div class="page" :style="{width: width + 'vw', right: x + 'px'}" @mousemove="move"> -->
-    <div class="pane">
+  <div class="pane">
+    <div>
       <slot></slot>
     </div>
   </div>
 </template> 
 
 <style scoped>
-  .backdrop { width: 100vw; height: 100vh; position: fixed; top: 0; visibility: hidden; }
-  .pane { visibility: visible; left: 350px; padding-top: 30px; padding-left: 20px; position: absolute; width: calc(100vw - 300px); bottom: 0; top: 0; overflow-y: scroll; }
-  .pane > * { padding-right: 40px; background: white; }
+  .pane { left: 380px; position: fixed; width: calc(100vw - 380px); bottom: 0; top: 0; overflow-y: scroll; }
+  .pane > * { animation: .5s .2s move forwards; opacity: 0; background: white; padding-left: 20px; }
 
-  /* .backdrop { width: 100vw; height: 100vh;; position: fixed; background: rgba(0,0,0,.2); top: 0; pointer-events: none;  }
-  .page { transition: transform .1s; user-select: none; opacity: 1; background: white; padding-top: .1px; width: 80vw; right: 0; height: 100%;  position: absolute; padding: 1.5rem 3rem; pointer-events: all; overflow: scroll; }
-  .page > * { animation: .5s .2s page forwards ease-out; opacity: 0; }
-
-  @keyframes page {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  } */
+  @keyframes move {
+    from { transform: scale(.99); opacity: 0; }
+    25% { opacity: 1; }
+    to { transform: scale(1); opacity: 1; }
+  }
 </style>
-
-<script>
-  // export default {
-  //   props: ['width'],
-  //   data: () => ({
-  //     x: null,
-  //   }),
-  //   methods: {
-  //     move(e) {
-  //       if (e.buttons == 1 && e.target.nodeName != "INPUT") {
-  //         this.x -= e.movementX;
-  //       }
-  //     },
-  //   }
-  // }
-</script>
