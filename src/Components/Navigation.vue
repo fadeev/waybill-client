@@ -9,12 +9,12 @@
       <router-link class="item" to="/sale/date" exact>Продажи</router-link>
       <router-link class="item" to="/register" exact>Касса</router-link>
       <!-- <span class="item">|</span> -->
-      <transition-group name="fade" mode="in-out" class="pane">
+      <!-- <transition-group name="fade" mode="in-out" class="pane">
         <router-link class="cl item" to="/waybill/new" exact v-if="routeHas('waybill')" key="waybill">Новая накладная</router-link>
         <router-link class="cl item" to="/product/inventory" exact v-if="routeHas('product')" key="inventory">Инвентаризация</router-link>
         <router-link class="cl item" to="/product/pricetag" exact v-if="routeHas('product')" key="pricetag">Ценники</router-link>
         <router-link class="cl item" to="/product/new" exact v-if="routeHas('product')" key="new">Новый товар</router-link>
-      </transition-group> 
+      </transition-group>   -->
     </div>
   </div>
 </template>

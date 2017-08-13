@@ -5,11 +5,11 @@
       <input type="text" v-model="waybill.serial_number" placeholder="Номер">
       <span>от</span>
       <input type="date" :value="waybill.original_date" @input="setOriginalDate" placeholder="Дата">
-    </h1> 
-    <div class="options">
-      <div>Поставщик</div>
+    </h1>
+    <!-- <div class="options">
+      <div>Контрагенты</div>
       <div>
-        <input type="text" v-model="waybill.supplier_name" @input="getSupplier" placeholder="Наименование">
+        <input type="text" v-model="waybill.supplier_name" @input="getSupplier" placeholder="Отправитель">
         <div v-if="!waybill.supplier_id && waybill.supplier_name" class="list">
           <a v-for="supplier in waybill.supplier_list" href="" @click.prevent="selectSupplier(supplier.supplier_id, supplier.name)">
             {{supplier.name}}
@@ -17,8 +17,30 @@
           <a href="" @click.prevent="submitSupplier(waybill.supplier_name)">Создать поставщика "{{waybill.supplier_name}}"</a>          
         </div>
       </div>
-    </div>
+    </div> -->
     <div class="options">
+      <div>Контрагенты</div>
+      <div style="display: inline-block">
+        <input type="text" v-model="waybill.sender_name" @input="getSenderList" placeholder="Отправитель">
+        <div v-if="!waybill.sender_id && waybill.sender_name" class="list">
+          <a v-for="sender in waybill.sender_list" href="" @click.prevent="selectSender(sender.organization_id, sender.name)">
+            {{sender.name}}
+          </a>
+          <a href="" @click.prevent="submitSender(waybill.sender_name)">Создать контрагента "{{waybill.sender_name}}"</a>
+        </div>
+        ➜
+        <div style="display: inline-block">
+          <input type="text" v-model="waybill.receiver_name" @input="getReceiverList" placeholder="Получатель">
+          <div v-if="!waybill.receiver_id && waybill.receiver_name" class="list">
+            <a v-for="receiver in waybill.receiver_list" href="" @click.prevent="selectReceiver(receiver.organization_id, receiver.name)">
+              {{receiver.name}}
+            </a>
+            <a href="" @click.prevent="submitReceiver(waybill.receiver_name)">Создать контрагента "{{waybill.receiver_name}}"</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="options">
       <div>Возврат</div>
       <div>
         <label>
@@ -26,7 +48,7 @@
           <span>{{waybill.return ? 'Да' : 'Нет'}}</span>
         </label>
       </div>
-    </div>
+    </div> -->
     <div class="options">
       <div>Наценка</div>
       <div>
@@ -34,7 +56,6 @@
         <span>%</span>
       </div>
     </div> 
-    <!-- <div class="table stretch" v-if="shipment && shipment.length > 0"> -->
     <div class="table stretch">
       <div class="header">
         <div class="text">Наименование</div>
@@ -166,6 +187,8 @@
    button svg { padding: 0 0 0 8px; }
    button:active svg { fill: white; }
    div.actions { margin: 20px 0; display: flex; align-items: center; }
+
+  .tb > * > * { padding-left: 0; flex-grow: 1; }
 </style>
 
 <script>
@@ -186,6 +209,12 @@
         supplier_list: null,
         markup: null,
         return: null,
+        sender_id: null,
+        sender_name: null,
+        sender_list: null,
+        receiver_id: null,
+        receiver_name: null,
+        receiver_list: null,
       },
       shipment: [],
       waybill_success: true,
@@ -307,7 +336,51 @@
             this.getPayment(this.id)
             this.$store.dispatch('getWaybillList')
           })
-      }
+      },
+      getSenderList(e) {
+        this.waybill.sender_id = null;
+        let name = e.target.value;
+        if (name === "") this.waybill.sender_list = null
+        axios.get(`${URL}/organization?search=${name}`)
+          .then(({data: {data: {organization}}}) => {
+            this.waybill.sender_list = organization
+          })
+          .catch(error => console.log(error))
+      },
+      submitSender(name) {
+        axios.post(`${URL}/organization`, {organization: {name: name}})
+          .then(({data: {data: {organization: {organization_id, name}}}}) => {
+            this.selectSender(organization_id, name)
+          })
+          .catch(error => console.log(error))
+      },
+      selectSender(id, name) {
+        this.waybill.sender_id = id;
+        this.waybill.sender_name = name;
+        this.waybill.sender_list = null;
+      },
+      getReceiverList(e) {
+        this.waybill.receiver_id = null;
+        let name = e.target.value;
+        if (name === "") this.waybill.receiver_list = null
+        axios.get(`${URL}/organization?search=${name}`)
+          .then(({data: {data: {organization}}}) => {
+            this.waybill.receiver_list = organization
+          })
+          .catch(error => console.log(error))
+      },
+      submitReceiver(name) {
+        axios.post(`${URL}/organization`, {organization: {name: name}})
+          .then(({data: {data: {organization: {organization_id, name}}}}) => {
+            this.selectReceiver(organization_id, name)
+          })
+          .catch(error => console.log(error))
+      },
+      selectReceiver(id, name) {
+        this.waybill.receiver_id = id;
+        this.waybill.receiver_name = name;
+        this.waybill.receiver_list = null;
+      },
     },
   }
 </script>

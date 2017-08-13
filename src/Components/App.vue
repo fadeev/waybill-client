@@ -90,8 +90,10 @@
   .tb .unit { position: absolute; margin-left: 5px; float: right; }
   .tb input { width: 100%; }
   .tb .item:hover { cursor: pointer; color: rgb(14,122,254); }
-  .tb .router-link-active, .tb .router-link-active:hover { border-radius: 2px; background: linear-gradient(to bottom, rgb(14,122,254), rgb(14,82,254)); color: white; text-decoration: none; }  
-  .tb .item.selection:hover { color: white; }
+  .tb .router-link-active, .tb .router-link-active:hover { border-radius: 2px; box-shadow: inset 0 0 0 .75px black; text-decoration: none; }  
+  /* .tb .router-link-active, .tb .router-link-active:hover { border-radius: 2px; background: linear-gradient(to bottom, rgb(14,122,254), rgb(14,82,254)); color: white; text-decoration: none; }   */
+  /* .tb .item.selection:hover { color: black; } */
+  /* .tb .item.selection:hover { color: white; } */
 
   .meek { font-size: .75em; color: #ccc; }
   .green { color: green; }
@@ -101,11 +103,25 @@
 
   .padd { padding: 0 5px; }
   .toggle { padding: 5px; border-radius: 2px; }
-  a.selection, div.selection { background: linear-gradient(to bottom, rgb(14,122,254), rgb(14,82,254)); color: white; border-radius: 3px; }
+  a.selection, div.selection { box-shadow: inset 0 0 0 .75px black; border-radius: 3px; }
+  /* a.selection, div.selection { background: linear-gradient(to bottom, rgb(14,122,254), rgb(14,82,254)); color: white; border-radius: 3px; } */
   .router-link-exact-active { color: black; cursor: default; }
   .router-link-exact-active:hover { color: black; cursor: default; }
 
   h1 input[type="date"] { padding-top: 0; padding-bottom: 0; }
+
+  .toolbar { display: flex; background: rgba(0,0,0,.0); border-radius: 2px; margin-bottom: 15px; }
+  .toolbar .button { border: 1px solid #ccc; margin-right: 10px; display: flex; flex-direction: column; align-items: center; width: 50px; cursor: pointer; padding: 0 10px 7px; border-radius: 2px; }
+  .toolbar .button .caption { font-size: 10px; padding: 0; margin-top: 5px; line-height: 10px; text-align:center; font-weight: 400; color: rgba(0,0,0,.3); }
+  .toolbar .button .icon { fill: rgba(0,0,0,.2); margin-top: 12px; }
+  .toolbar .button:hover { border-color: rgb(14,122,254); color: rgb(14,122,254); }
+  .toolbar .button:hover .caption { color: rgba(0,0,0,1); }
+  .toolbar .button:hover .icon { fill: rgb(14,122,254); }
+  .toolbar .button.router-link-exact-active { border-color: black; }
+  .toolbar .button.router-link-exact-active .icon { fill: black; }
+  .toolbar .button.router-link-exact-active .caption { color: black; }
+
+  .heading:hover { color: red; }
 </style>
 
 <script>

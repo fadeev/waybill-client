@@ -48,8 +48,8 @@
   .checkbox { fill: rgba(0,0,0,.3); }
   .checkbox:hover { fill: rgb(14,82,254); }
   .active { fill: rgb(14,82,254); animation: .2s resize forwards; transform: scale(.5); }
-  .router-link-active .checkbox { fill: white; }
-  .router-link-active .active { fill: white; }
+  /* .router-link-active .checkbox { fill: white; }
+  .router-link-active .active { fill: white; } */
 
   @keyframes resize {
     from { transform: scale(.9); }
