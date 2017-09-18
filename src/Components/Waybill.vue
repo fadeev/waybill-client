@@ -6,8 +6,8 @@
       <span>от</span>
       <input type="date" :value="waybill.original_date" @input="setOriginalDate" placeholder="Дата">
     </h1>
-    <!-- <div class="options">
-      <div>Контрагенты</div>
+     <div class="options">
+      <div>Контрагент</div>
       <div>
         <input type="text" v-model="waybill.supplier_name" @input="getSupplier" placeholder="Отправитель">
         <div v-if="!waybill.supplier_id && waybill.supplier_name" class="list">
@@ -17,8 +17,8 @@
           <a href="" @click.prevent="submitSupplier(waybill.supplier_name)">Создать поставщика "{{waybill.supplier_name}}"</a>          
         </div>
       </div>
-    </div> -->
-    <div class="options">
+    </div>
+    <!-- <div class="options">
       <div>Контрагенты</div>
       <div style="display: inline-block">
         <input type="text" v-model="waybill.sender_name" @input="getSenderList" placeholder="Отправитель">
@@ -39,7 +39,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <!-- <div class="options">
       <div>Возврат</div>
       <div>
@@ -209,12 +209,12 @@
         supplier_list: null,
         markup: null,
         return: null,
-        sender_id: null,
-        sender_name: null,
-        sender_list: null,
-        receiver_id: null,
-        receiver_name: null,
-        receiver_list: null,
+        // sender_id: null,
+        // sender_name: null,
+        // sender_list: null,
+        // receiver_id: null,
+        // receiver_name: null,
+        // receiver_list: null,
       },
       shipment: [],
       waybill_success: true,
@@ -337,50 +337,50 @@
             this.$store.dispatch('getWaybillList')
           })
       },
-      getSenderList(e) {
-        this.waybill.sender_id = null;
-        let name = e.target.value;
-        if (name === "") this.waybill.sender_list = null
-        axios.get(`${URL}/organization?search=${name}`)
-          .then(({data: {data: {organization}}}) => {
-            this.waybill.sender_list = organization
-          })
-          .catch(error => console.log(error))
-      },
-      submitSender(name) {
-        axios.post(`${URL}/organization`, {organization: {name: name}})
-          .then(({data: {data: {organization: {organization_id, name}}}}) => {
-            this.selectSender(organization_id, name)
-          })
-          .catch(error => console.log(error))
-      },
-      selectSender(id, name) {
-        this.waybill.sender_id = id;
-        this.waybill.sender_name = name;
-        this.waybill.sender_list = null;
-      },
-      getReceiverList(e) {
-        this.waybill.receiver_id = null;
-        let name = e.target.value;
-        if (name === "") this.waybill.receiver_list = null
-        axios.get(`${URL}/organization?search=${name}`)
-          .then(({data: {data: {organization}}}) => {
-            this.waybill.receiver_list = organization
-          })
-          .catch(error => console.log(error))
-      },
-      submitReceiver(name) {
-        axios.post(`${URL}/organization`, {organization: {name: name}})
-          .then(({data: {data: {organization: {organization_id, name}}}}) => {
-            this.selectReceiver(organization_id, name)
-          })
-          .catch(error => console.log(error))
-      },
-      selectReceiver(id, name) {
-        this.waybill.receiver_id = id;
-        this.waybill.receiver_name = name;
-        this.waybill.receiver_list = null;
-      },
+      // getSenderList(e) {
+      //   this.waybill.sender_id = null;
+      //   let name = e.target.value;
+      //   if (name === "") this.waybill.sender_list = null
+      //   axios.get(`${URL}/organization?search=${name}`)
+      //     .then(({data: {data: {organization}}}) => {
+      //       this.waybill.sender_list = organization
+      //     })
+      //     .catch(error => console.log(error))
+      // },
+      // submitSender(name) {
+      //   axios.post(`${URL}/organization`, {organization: {name: name}})
+      //     .then(({data: {data: {organization: {organization_id, name}}}}) => {
+      //       this.selectSender(organization_id, name)
+      //     })
+      //     .catch(error => console.log(error))
+      // },
+      // selectSender(id, name) {
+      //   this.waybill.sender_id = id;
+      //   this.waybill.sender_name = name;
+      //   this.waybill.sender_list = null;
+      // },
+      // getReceiverList(e) {
+      //   this.waybill.receiver_id = null;
+      //   let name = e.target.value;
+      //   if (name === "") this.waybill.receiver_list = null
+      //   axios.get(`${URL}/organization?search=${name}`)
+      //     .then(({data: {data: {organization}}}) => {
+      //       this.waybill.receiver_list = organization
+      //     })
+      //     .catch(error => console.log(error))
+      // },
+      // submitReceiver(name) {
+      //   axios.post(`${URL}/organization`, {organization: {name: name}})
+      //     .then(({data: {data: {organization: {organization_id, name}}}}) => {
+      //       this.selectReceiver(organization_id, name)
+      //     })
+      //     .catch(error => console.log(error))
+      // },
+      // selectReceiver(id, name) {
+      //   this.waybill.receiver_id = id;
+      //   this.waybill.receiver_name = name;
+      //   this.waybill.receiver_list = null;
+      // },
     },
   }
 </script>
