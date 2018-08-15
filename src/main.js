@@ -8,7 +8,7 @@ import store from './store'
 import App from './Components/App.vue'
 
 new Vue({
- el: '#app',
+  el: '#app',
   router,
   store,
   render: h => h(App)
